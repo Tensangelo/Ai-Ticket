@@ -1,0 +1,17 @@
+# Secretos y entorno local
+.env
+.env.local
+.env.*.local
+
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+.next/
+out/
+
+# Logs y SO
+*.log
+.DS_Store
+Thumbs.db
