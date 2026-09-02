@@ -2,7 +2,7 @@
 
 Workspace ligero de tickets operativos impulsado por IA. Quien clone el repo solo necesita Docker y una clave de Groq.
 
-La interfaz esta en ingles. Este README y [backend/README.md](backend/README.md) estan en espanol.
+La interfaz esta en ingles. Este README, [backend/README.md](backend/README.md) y [frontend/README.md](frontend/README.md) estan en espanol.
 
 ## Arquitectura
 
