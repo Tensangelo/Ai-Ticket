@@ -1,0 +1,15 @@
+node_modules
+dist
+src/generated
+coverage
+.git
+.env
+.env.*
+*.md
+test
+**/*.spec.ts
+vitest.config.ts
+vitest.config.e2e.ts
+.prettierrc
+oxlint.json
+tsconfig.build.tsbuildinfo

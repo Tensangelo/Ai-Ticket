@@ -1,19 +1,25 @@
 # Secretos y entorno local
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
 # Dependencias
 node_modules/
 
-# Builds
+# Builds y cliente generado
 dist/
 .next/
 out/
+build/
 generated/
 src/generated/
+coverage/
+*.tsbuildinfo
 
-# Logs y SO
+# Logs, caches y SO
 *.log
+.turbo
+.vercel
+*.pem
 .DS_Store
 Thumbs.db

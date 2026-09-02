@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { AiService } from '../ai/ai.service.js';
 import { ClassificationResult } from '../ai/classify-ticket.result.js';
+import { categoryAssigneeNames } from '../catalogs/category-assignees.js';
 import { catalogNames } from '../catalogs/catalog-names.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateCommentDto } from './dto/create-comment.dto.js';
@@ -107,12 +108,16 @@ export class TicketsService {
         include: ticketDetailInclude,
       });
     }
+    const ownerId = await this.findAssigneeIdByCategoryId(
+      classification.categoryId,
+    );
     return this.prismaService.ticket.update({
       where: { id: ticketId },
       data: {
         categoryId: classification.categoryId,
         priorityId: classification.priorityId,
         summary: classification.summary,
+        ownerId,
         classificationStatus: 'SUCCESS',
         classificationError: null,
       },
@@ -120,6 +125,24 @@ export class TicketsService {
     });
   }
 
+  private async findAssigneeIdByCategoryId(
+    categoryId: number,
+  ): Promise<string | null> {
+    const category = await this.prismaService.category.findUnique({
+      where: { id: categoryId },
+    });
+    if (!category) {
+      return null;
+    }
+    const assigneeName = categoryAssigneeNames[category.name];
+    if (!assigneeName) {
+      return null;
+    }
+    const assignee = await this.prismaService.user.findFirst({
+      where: { fullName: assigneeName },
+    });
+    return assignee?.id ?? null;
+  }
 
   public async updateTicket(
     ticketId: string,
@@ -148,7 +171,6 @@ export class TicketsService {
     });
   }
 
-  /* Agrega un comentario al ticket. 404 si el ticket no existe. */
   public async createComment(
     ticketId: string,
     createCommentDto: CreateCommentDto,
@@ -158,6 +180,8 @@ export class TicketsService {
       data: {
         ticketId,
         content: createCommentDto.content,
+        authorName: createCommentDto.authorName,
+        authorRole: createCommentDto.authorRole,
       },
     });
   }
