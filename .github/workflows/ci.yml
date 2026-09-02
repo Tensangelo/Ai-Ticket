@@ -1,5 +1,4 @@
-# CI minimo del backend. El job de frontend se agrega cuando exista Next.js.
-# No llama a Groq ni levanta Postgres.
+# CI minimo del backend. No llama a Groq ni levanta Postgres.
 
 name: CI
 

@@ -27,7 +27,7 @@ POST /tickets
 
 Despues el usuario puede cambiar estado, encargado, categoria, prioridad y summary con `PATCH`. Los comentarios son independientes de la IA.
 
-**Por que Unclassified + Medium al crear:** valores del catalogo, seguros. Un fallo de Groq no debe parecer "Needed yesterday" Esto puede agregarse a deuda tecnica en la cual el usuario seleccione el catalogo inicial y su prioridad y luego la ia lo actualice si lo ve necesario pero eesto incluye un paso extra de validacion: Determinar que prevalece si la decision inicial del usuario o la modificacion de la ia.
+**Por que Unclassified + Medium al crear:** valores del catalogo, seguros. Un fallo de Groq no debe parecer "Needed yesterday".
 
 ## Donde esta cada cosa
 
@@ -97,7 +97,7 @@ No existe `GET /catalog`.
 | GET | `/tickets/:id` | Detalle + comments ordenados |
 | POST | `/tickets` | Solo datos de usuario. Luego corre la IA |
 | PATCH | `/tickets/:id` | Campos opcionales de gestion y de IA |
-| POST | `/tickets/:id/comments` | `{ "content": "..." }` |
+| POST | `/tickets/:id/comments` | `{ "content", "authorName", "authorRole" }` |
 
 **POST /tickets** (escribe el usuario):
 
@@ -172,15 +172,15 @@ pnpm run start:dev
 
 Prisma 7 usa `prisma.config.ts` y el adapter `@prisma/adapter-pg`. No es el cliente clasico de Prisma 5.
 
+En Docker el backend usa `DATABASE_URL` con host `postgres`. Al arrancar corre `prisma migrate deploy`, luego `prisma db seed`, y despues Nest.
+
 ## Deudas tecnicas (consciente)
 
 - Sin CRUD de categorias/prioridades (`active` no se administra por API).
 - Sin autenticacion (requisito del reto: usuarios simulados).
-- Comentarios sin autor.
+- Comentarios guardan nombre y rol como texto (no hay FK a User).
 - Sin `PATCH` de title/description/customer.
 - Sin boton "Retry classification" (se puede re-crear el ticket o esperar ese endpoint).
-- Frontend y Dockerfiles de Nest/Next pendientes.
-- `docker compose` todavia no incluye backend ni frontend.
 
 ## Dependencias de runtime relevantes
 

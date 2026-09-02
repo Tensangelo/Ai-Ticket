@@ -1,63 +1,76 @@
 # AI Ticket Workspace
 
-Workspace ligero de tickets operativos impulsado por IA.
+Workspace ligero de tickets operativos impulsado por IA. Quien clone el repo solo necesita Docker y una clave de Groq.
 
-## Estado actual
-
-Hoy `docker compose up` **solo** levanta Postgres. El API se arranca con pnpm en `backend/`. El evaluador pedira al final `docker compose up --build` con los tres servicios; eso se cierra cuando existan los Dockerfiles.
-
-Detalle del API: [backend/README.md](backend/README.md).
+La interfaz esta en ingles. Este README y [backend/README.md](backend/README.md) estan en espanol.
 
 ## Arquitectura
 
 ```
-Navegador (frontend)
+Navegador :3000 (Next.js)
     │  HTTP
     ▼
   NestJS :3001
     │
-    ├── Prisma ──► PostgreSQL :5432 (contenedor Docker)
+    ├── Prisma ──► PostgreSQL :5432 (servicio `postgres`)
     └── AiService ──► Groq (API compatible con OpenAI)
 ```
 
-No hay login. Los dueños de tickets son usuarios simulados (seed + `POST /users`).
+No hay login. El operador escribe nombre y apellido en el navegador (`localStorage`, rol fijo Head of Operations). Los encargados de tickets salen del seed (Sarah Johnson, Michael Brown, Emily Davis, Daniel Martinez).
 
-## Requisitos locales
+## Requisitos
 
-- Node.js 24+
-- pnpm 11+
 - Docker Desktop (Compose v2+)
 - Clave gratuita de [Groq](https://console.groq.com) (sin tarjeta)
+- Para desarrollo local: Node.js 24+ y pnpm 11+
 
-## Arranque (desarrollo)
+## Arranque (Docker)
 
-### 1. Variables de entorno
+Desde la raiz del repo. Si Nest o Next ya corren en local, detenlos (puertos 3000 y 3001).
 
-```powershell
-copy .env.example .env
+Copia `.env.example` a `.env` y pon `AI_API_KEY`. No subas `.env` a git. Sin esa clave los tickets se crean igual, pero la clasificacion queda `FAILED`.
+
+```sh
+cp .env.example .env
 ```
 
-En `.env.example` veras la estructura de las keys y dominios.
+En PowerShell: `copy .env.example .env`
 
-`DATABASE_URL` para Nest en tu PC usa `localhost` porque Postgres publica el puerto 5432. **Dentro de un contenedor** el host seria el nombre del servicio (`postgres`), no `localhost`.
-
-### 2. Base de datos
-
-Desde la raiz del repo (`d:\Projects\AI-ticket`):
-
-```powershell
-docker compose up -d
-docker compose ps
+```sh
+docker compose down -v
+docker compose up --build
 ```
 
-Parar sin borrar datos: `docker compose down`
-Borrar tambien el volumen: `docker compose down -v`
+Espera a que el backend termine migrate + seed (el healthcheck da unos 40 s de margen). Luego:
 
-### 3. Backend
+| Que | URL |
+|-----|-----|
+| App | http://localhost:3000 |
+| API | http://localhost:3001 (`GET /` → `{ "status": "ok" }`) |
 
-Desde `AI-ticket\backend`:
+Parar sin borrar datos: `docker compose down`  
+Borrar tambien el volumen de Postgres: `docker compose down -v`
 
-```powershell
+El navegador llama a Nest en `http://localhost:3001`. Los Server Components de Next, dentro de Docker, usan `http://backend:3001`. Compose inyecta `DATABASE_URL` del backend con host `postgres`, no `localhost`.
+
+## Como usarlo
+
+1. Abre http://localhost:3000 e indica nombre y apellido (se guarda en el navegador).
+2. **New ticket**: cliente, titulo, descripcion y URL de adjunto opcional. El ticket se guarda primero; Groq clasifica despues.
+3. El dashboard lista tickets. Si la IA falla veras el badge **AI failed** y el motivo.
+4. El detalle (`/tickets/[id]`) permite cambiar estado, encargado, categoria, prioridad y resumen, y anadir comentarios firmados con tu nombre.
+
+Asignacion automatica tras clasificar (no la elige Groq): Finance → Sarah Johnson, Legal → Michael Brown, Procurement → Daniel Martinez, Operations → Emily Davis. Unclassified o `FAILED` quedan sin encargado.
+
+## Desarrollo local (solo Postgres en Docker)
+
+```sh
+docker compose up -d postgres
+```
+
+Backend, desde `backend/`:
+
+```sh
 pnpm install
 pnpm exec prisma generate
 pnpm exec prisma migrate dev
@@ -65,21 +78,24 @@ pnpm exec prisma db seed
 pnpm run start:dev
 ```
 
-API: [http://localhost:3001](http://localhost:3001)
-Health: `GET /` → `{ "status": "ok" }`
+Frontend, desde `frontend/` (Next no lee el `.env` de la raiz):
 
-## Que hace la IA (resumen)
+```sh
+cp .env.example .env.local
+pnpm install
+pnpm dev
+```
 
-Al `POST /tickets` el ticket **se guarda primero** (Unclassified + Medium + `PENDING`). Luego Groq propone `category`, `priority` y `summary`. El backend valida que esos nombres existan en las tablas catalogo. Si Groq falla, el ticket sigue existiendo con `FAILED` y un `classificationError`. El usuario puede corregir esos campos con `PATCH`.
+En `.env.local` deja `NEXT_PUBLIC_API_URL=http://localhost:3001`. `DATABASE_URL` del `.env` de la raiz usa `localhost` porque Postgres publica el 5432.
 
-## Frontend (proximo)
+Detalle de endpoints, prompts y Prisma: [backend/README.md](backend/README.md). Notas del UI: [frontend/README.md](frontend/README.md).
 
-Next.js 16, React 19, Tailwind, Zod. Puerto previsto **3000**. Hablara con `NEXT_PUBLIC_API_URL` (por defecto `http://localhost:3001`).
+## Que hace la IA
+
+Al `POST /tickets` el ticket **se guarda primero** (Unclassified + Medium + `PENDING`). Luego Groq propone `category`, `priority` y `summary`. El backend valida que esos nombres existan en el catalogo y asigna encargado segun la categoria. Si Groq falla, el ticket sigue existiendo con `FAILED` y un `classificationError`. Esos campos se pueden corregir con `PATCH`.
 
 ## Stack
 
-- Frontend (previsto): Next.js 16, TypeScript, Tailwind, Zod
+- Frontend: Next.js 16, React 19, TypeScript, Tailwind
 - Backend: NestJS 12, Prisma 7, PostgreSQL 16, Groq (`openai` SDK)
 - Gestor de paquetes: pnpm
-
-## Repositorio
