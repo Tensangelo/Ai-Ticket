@@ -1,0 +1,8 @@
+# pnpm 11: scripts de build permitidos (prisma y esbuild de tsx).
+allowBuilds:
+  prisma: true
+  '@prisma/engines': true
+  '@prisma/client': true
+  esbuild: true
+  msgpackr-extract: false
+  workerd: false
