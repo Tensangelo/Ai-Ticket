@@ -12,7 +12,7 @@ export function ClassificationBadge({
   if (status === "FAILED") {
     return (
       <span
-        className="inline-flex max-w-48 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800"
+        className="inline-flex max-w-48 rounded-full bg-danger-bg px-2.5 py-0.5 text-xs font-medium text-danger"
         title={errorMessage ?? "AI classification failed"}
       >
         AI failed
@@ -21,13 +21,13 @@ export function ClassificationBadge({
   }
   if (status === "PENDING") {
     return (
-      <span className="inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+      <span className="inline-flex rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-muted">
         AI pending
       </span>
     );
   }
   return (
-    <span className="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
+    <span className="inline-flex rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-medium text-accent-dim">
       AI ok
     </span>
   );

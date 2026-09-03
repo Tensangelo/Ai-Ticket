@@ -1,10 +1,10 @@
 import type { CatalogItem } from "@/lib/types/ticket";
 
 const priorityClassNames: Record<string, string> = {
-  "Needed yesterday": "bg-red-100 text-red-800",
-  High: "bg-orange-100 text-orange-800",
-  Medium: "bg-amber-100 text-amber-900",
-  Low: "bg-emerald-100 text-emerald-800",
+  "Needed yesterday": "bg-danger-bg text-danger",
+  High: "bg-orange-500/15 text-orange-300",
+  Medium: "bg-accent/10 text-muted",
+  Low: "bg-accent/15 text-accent-dim",
 };
 
 export function PriorityBadge({
@@ -13,7 +13,7 @@ export function PriorityBadge({
   priority: Pick<CatalogItem, "name">;
 }) {
   const className =
-    priorityClassNames[priority.name] ?? "bg-zinc-100 text-zinc-800";
+    priorityClassNames[priority.name] ?? "bg-background text-muted";
   return (
     <span
       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`}

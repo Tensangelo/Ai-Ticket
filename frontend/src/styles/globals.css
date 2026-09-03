@@ -1,19 +1,83 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #18181b;
+  --background: #001b24;
+  --surface: #111822;
+  --foreground: #ffffff;
+  --muted: #94a3b8;
+  --accent: #08fdd8;
+  --accent-dim: #4bc6b6;
+  --line: color-mix(in srgb, #4bc6b6 32%, #001b24);
+  --danger: #fca5a5;
+  --danger-bg: color-mix(in srgb, #f87171 18%, #001b24);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-line: var(--line);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --font-sans: var(--font-roboto);
+  --font-mono: var(--font-roboto);
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-lg border border-line bg-surface;
+  }
+
+  .soft-panel {
+    @apply rounded-lg bg-surface p-4 shadow-lg shadow-accent/20;
+  }
+
+  .comment-card {
+    @apply rounded-md border-l-2 border-l-accent-dim bg-[#0a2430] px-3.5 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.32)];
+  }
+
+  .field {
+    @apply mt-1 w-full rounded-md border border-accent/10 bg-[#00222e] px-3 py-2.5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(8,253,216,0.08)] outline-none placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent/40 disabled:opacity-60;
+  }
+
+  .form-panel {
+    @apply p-4 sm:p-5 rounded-lg border border-line bg-surface;
+  }
+
+  .form-actions {
+    @apply flex justify-end gap-2;
+  }
+
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center rounded-md bg-accent px-3 py-2 text-sm font-medium text-background hover:bg-accent-dim focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60;
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-surface hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60;
+  }
+
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight text-accent;
+  }
+
+  .section-title {
+    @apply text-sm font-semibold tracking-wide text-foreground;
+  }
+
+  .alert-error {
+    @apply rounded-md border border-danger/40 bg-danger-bg px-4 py-3 text-sm text-danger;
+  }
 }

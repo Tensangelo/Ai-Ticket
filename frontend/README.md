@@ -6,10 +6,12 @@ El arranque con Docker esta en el [README de la raiz](../README.md). Este archiv
 
 ## Que hay aqui
 
-- Dashboard (`/`): tabla de tickets, badge si la IA fallo, fila completa clicable.
+- Dashboard (`/`): recuento por estado, tablero Kanban (Board) y lista (List). Badge si la IA fallo.
 - Detalle (`/tickets/[id]`): solicitud, resumen de IA, comentarios, gestion (estado, encargado, categoria, prioridad, summary).
 - **New ticket**: modal. El POST espera a Groq y luego abre el detalle.
 - Identidad del operador: nombre y apellido en `localStorage`. Rol fijo: Head of Operations. Sirve para firmar comentarios. No hay login.
+
+UI agrupada por feature: `src/components/layout`, `operator`, `tickets`. Las mutaciones de cliente (crear, PATCH, comentar) van en hooks; las paginas servidor siguen usando `src/lib/api`.
 
 Next habla con Nest en `NEXT_PUBLIC_API_URL` (navegador) o `API_URL` (Server Components en Docker).
 

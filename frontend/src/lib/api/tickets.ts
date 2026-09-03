@@ -120,7 +120,7 @@ async function readApiError(response: Response): Promise<string> {
 
 export interface UpdateTicketInput {
   status: TicketStatus;
-  ownerId?: string;
+  ownerId?: string | null;
   categoryId: number;
   priorityId: number;
   summary: string;
