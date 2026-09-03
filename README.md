@@ -1,5 +1,7 @@
 # AI Ticket Workspace
 
+# Video: de presentacion: https://drive.google.com/file/d/1ScifKW1URQcK8E6VCMQA7ESl0CABrOgN/view?usp=sharing
+
 Workspace ligero de tickets operativos impulsado por IA. Quien clone el repo solo necesita Docker y una clave de Groq.
 
 La interfaz esta en ingles. Este README, [backend/README.md](backend/README.md) y [frontend/README.md](frontend/README.md) estan en espanol.
