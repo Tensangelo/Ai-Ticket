@@ -6,6 +6,7 @@ import {
   IsString,
   IsUUID,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 import { Status } from '../../generated/prisma/client.js';
 
@@ -15,8 +16,9 @@ export class UpdateTicketDto {
   public readonly status?: Status;
 
   @IsOptional()
+  @ValidateIf((_, value: unknown) => value !== null)
   @IsUUID()
-  public readonly ownerId?: string;
+  public readonly ownerId?: string | null;
 
   @IsOptional()
   @Type(() => Number)

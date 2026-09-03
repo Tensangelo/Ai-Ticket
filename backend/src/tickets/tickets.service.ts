@@ -149,7 +149,7 @@ export class TicketsService {
     updateTicketDto: UpdateTicketDto,
   ) {
     await this.findTicketById(ticketId);
-    if (updateTicketDto.ownerId) {
+    if (updateTicketDto.ownerId !== undefined && updateTicketDto.ownerId !== null) {
       await this.findExistingUser(updateTicketDto.ownerId);
     }
     if (updateTicketDto.categoryId !== undefined) {

@@ -43,9 +43,9 @@ docker compose up --build
 
 Espera a que el backend termine migrate + seed (el healthcheck da unos 40 s de margen). Luego:
 
-| Que | URL |
-|-----|-----|
-| App | http://localhost:3000 |
+| Que | URL                                                    |
+| --- | ------------------------------------------------------ |
+| App | http://localhost:3000                                  |
 | API | http://localhost:3001 (`GET /` → `{ "status": "ok" }`) |
 
 Parar sin borrar datos: `docker compose down`  
@@ -93,6 +93,23 @@ Detalle de endpoints, prompts y Prisma: [backend/README.md](backend/README.md). 
 ## Que hace la IA
 
 Al `POST /tickets` el ticket **se guarda primero** (Unclassified + Medium + `PENDING`). Luego Groq propone `category`, `priority` y `summary`. El backend valida que esos nombres existan en el catalogo y asigna encargado segun la categoria. Si Groq falla, el ticket sigue existiendo con `FAILED` y un `classificationError`. Esos campos se pueden corregir con `PATCH`.
+
+## Herramientas y uso de IA
+
+El enunciado del reto fomenta desarrollo asistido por IA (Cursor, Claude Code, etc.). Este repo se construyo principalmente con **Cursor** y hubo un uso puntual de OpenCode. No hay `CLAUDE.md`, skills ni agentes extra: el estandar para el asistente esta en [AGENTS.md](AGENTS.md).
+
+Usar el asistente no sustituye las decisiones de producto. Quedaron fijas en chat y en codigo, no las dejo inventar el modelo:
+
+- El ticket se persiste **antes** de llamar a Groq. Un fallo de IA no tumba el `POST`.
+- Categoria y prioridad son filas de catalogo en PostgreSQL, no enums sueltos ni nombres inventados por el LLM.
+- Si la clasificacion falla: Unclassified + Medium, no un departamento real ni “Needed yesterday”.
+- Groq (API compatible con OpenAI, clave gratuita) en lugar de OpenAI de pago.
+- Sin login. Identidad del operador en `localStorage`. Encargado por mapa de categoria en el backend, no elegido por Groq.
+- Entrega desplegable: `docker compose up --build`.
+
+El asistente acelero Nest, Prisma, Next y Docker. El humano define el flujo, revisa el diff y debe poder explicarlo sin el chat: `POST` → Prisma → `AiService` (unico que habla con Groq) → validar catalogo → asignar owner → 200 con ticket aunque Groq falle.
+
+Quien clone el repo necesita **su** `AI_API_KEY` de [Groq](https://console.groq.com). No va en la imagen ni en git.
 
 ## Stack
 

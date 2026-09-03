@@ -117,7 +117,7 @@ No existe `GET /catalog`.
 | Campo | Quien lo usa |
 |-------|----------------|
 | `status` | Gestion: `OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED` |
-| `ownerId` | Gestion: UUID de `GET /users` |
+| `ownerId` | Gestion: UUID de `GET /users`, o `null` para dejarlo sin encargado |
 | `categoryId` | Corregir a la IA (entero del catalogo activo) |
 | `priorityId` | Corregir a la IA |
 | `summary` | Corregir a la IA |
